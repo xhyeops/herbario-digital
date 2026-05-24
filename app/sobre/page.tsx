@@ -91,10 +91,7 @@ export default async function SobrePage() {
 
             <div className="space-y-5">
               {paragraphs.map((paragraph, index) => (
-                <p
-                  key={index}
-                  className="leading-relaxed text-muted-foreground"
-                >
+                <p key={index} className="leading-relaxed text-muted-foreground">
                   {paragraph}
                 </p>
               ))}
@@ -136,9 +133,9 @@ export default async function SobrePage() {
               </p>
             </div>
 
-            <div className="grid gap-5 md:grid-cols-[0.8fr_1.2fr]">
+            <div className="grid gap-5 md:grid-cols-[0.75fr_1.25fr]">
               <div className="rounded-2xl border bg-card p-5">
-                <h3 className="mb-2 font-semibold">Orientação</h3>
+                <h3 className="mb-3 font-semibold">Orientação</h3>
                 <p className="text-muted-foreground">{horto.orientation}</p>
               </div>
 
@@ -148,11 +145,11 @@ export default async function SobrePage() {
                   <h3 className="font-semibold">Alunos Colaboradores</h3>
                 </div>
 
-                <ul className="grid gap-2 text-muted-foreground sm:grid-cols-2">
+                <ul className="grid gap-3 sm:grid-cols-2">
                   {(horto.students || []).map((student: string) => (
                     <li
                       key={student}
-                      className="rounded-full bg-muted px-4 py-2 text-sm"
+                      className="rounded-full bg-muted px-4 py-2 text-sm text-muted-foreground"
                     >
                       {student}
                     </li>
