@@ -1,3 +1,4 @@
+import { unstable_noStore as noStore } from "next/cache"
 import { notFound } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
@@ -20,12 +21,14 @@ import { Badge } from "@/components/ui/badge"
 import { supabase } from "@/lib/supabase"
 
 export const dynamic = "force-dynamic"
+export const revalidate = 0
 
 export default async function PlantDetailPage({
   params,
 }: {
   params: { id: string }
 }) {
+  noStore()
   const { data: plant, error } = await supabase
     .from("plants")
     .select("*")
