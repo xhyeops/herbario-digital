@@ -3,15 +3,26 @@ import { supabase } from "@/lib/supabase"
 
 export const dynamic = "force-dynamic"
 
-export default async function HortoPage() {
-  const { data: horto } = await supabase
+export default async function SobrePage() {
+  const { data: horto, error } = await supabase
     .from("horto_page")
     .select("*")
     .eq("id", "main")
     .single()
 
+  if (error) {
+    console.error(error)
+  }
+
   if (!horto) {
-    return null
+    return (
+      <div className="container mx-auto px-4 py-20 text-center">
+        <h1 className="text-3xl font-bold">Página não configurada</h1>
+        <p className="mt-2 text-muted-foreground">
+          Cadastre o conteúdo da página Sobre o Horto no painel administrativo.
+        </p>
+      </div>
+    )
   }
 
   const images = [
@@ -23,28 +34,34 @@ export default async function HortoPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <header className="text-center mb-12">
-        <h1 className="text-4xl md:text-5xl font-bold mb-4 text-balance">
-          {horto.title}
+      <header className="mb-12 text-center">
+        <h1 className="mb-4 text-4xl font-bold md:text-5xl">
+          {horto.title || "Sobre o Horto"}
         </h1>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-pretty">
-          {horto.subtitle}
+
+        <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+          {horto.subtitle || "Horto de Plantas Medicinais da Unifametro"}
         </p>
       </header>
 
-      <div className="grid md:grid-cols-2 gap-4 mb-12">
-        {images.map((image, index) => (
-          <div key={index} className="relative aspect-video rounded-lg overflow-hidden">
-            <Image
-              src={image}
-              alt={`Imagem do Horto ${index + 1}`}
-              fill
-              className="object-cover"
-              priority={index === 0}
-            />
-          </div>
-        ))}
-      </div>
+      {images.length > 0 && (
+        <div className="mb-12 grid gap-4 md:grid-cols-2">
+          {images.map((image, index) => (
+            <div
+              key={index}
+              className="relative aspect-video overflow-hidden rounded-lg border bg-muted"
+            >
+              <Image
+                src={image}
+                alt={`Imagem do Horto ${index + 1}`}
+                fill
+                className="object-cover"
+                priority={index === 0}
+              />
+            </div>
+          ))}
+        </div>
+      )}
 
       <section className="mb-12">
         <div className="prose prose-lg max-w-none">
@@ -53,7 +70,7 @@ export default async function HortoPage() {
             .map((paragraph, index) => (
               <p
                 key={index}
-                className="text-muted-foreground leading-relaxed mb-4"
+                className="mb-4 leading-relaxed text-muted-foreground"
               >
                 {paragraph}
               </p>
@@ -62,22 +79,32 @@ export default async function HortoPage() {
       </section>
 
       <section className="border-t border-border pt-12">
-        <h2 className="text-3xl font-bold mb-6 text-center">Créditos</h2>
+        <h2 className="mb-6 text-center text-3xl font-bold">
+          Créditos
+        </h2>
 
-        <div className="bg-muted/50 rounded-lg p-6 md:p-8 max-w-3xl mx-auto">
-          <p className="text-muted-foreground leading-relaxed mb-6 text-center">
+        <div className="mx-auto max-w-3xl rounded-lg bg-muted/50 p-6 md:p-8">
+          <p className="mb-6 text-center leading-relaxed text-muted-foreground">
             {horto.credits_text}
           </p>
 
           <div className="space-y-4">
             <div>
-              <h3 className="font-semibold text-lg mb-2">Orientação</h3>
-              <p className="text-muted-foreground">{horto.orientation}</p>
+              <h3 className="mb-2 text-lg font-semibold">
+                Orientação
+              </h3>
+
+              <p className="text-muted-foreground">
+                {horto.orientation}
+              </p>
             </div>
 
             <div>
-              <h3 className="font-semibold text-lg mb-2">Alunos Colaboradores</h3>
-              <ul className="grid sm:grid-cols-2 gap-2 text-muted-foreground">
+              <h3 className="mb-2 text-lg font-semibold">
+                Alunos Colaboradores
+              </h3>
+
+              <ul className="grid gap-2 text-muted-foreground sm:grid-cols-2">
                 {(horto.students || []).map((student: string) => (
                   <li key={student}>{student}</li>
                 ))}
