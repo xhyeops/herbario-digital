@@ -3,8 +3,7 @@
 import { useMemo, useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { Search } from "lucide-react"
-
+import { Search, X } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 
@@ -15,17 +14,15 @@ interface Plant {
   image_url: string
 }
 
-export function PlantsGrid({
-  plants,
-}: {
-  plants: Plant[]
-}) {
+export function PlantsGrid({ plants }: { plants: Plant[] }) {
   const [search, setSearch] = useState("")
 
   const filteredPlants = useMemo(() => {
-    return plants.filter((plant) => {
-      const value = search.toLowerCase()
+    const value = search.toLowerCase().trim()
 
+    if (!value) return plants
+
+    return plants.filter((plant) => {
       return (
         plant.name.toLowerCase().includes(value) ||
         plant.scientific_name?.toLowerCase().includes(value)
@@ -35,27 +32,48 @@ export function PlantsGrid({
 
   return (
     <>
-      <div className="sticky top-[72px] z-20 mb-10">
-        <div className="mx-auto max-w-3xl rounded-2xl border border-primary/20 bg-background/90 p-3 shadow-lg backdrop-blur-xl">
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-primary" />
+      <div className="sticky top-[72px] z-30 mb-8 border-b border-border/60 bg-background/95 py-4 backdrop-blur-xl">
+        <div className="container mx-auto px-0">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h2 className="text-3xl font-bold">Catálogo de plantas</h2>
+              <p className="text-muted-foreground">
+                Selecione uma espécie para visualizar detalhes completos.
+              </p>
+            </div>
 
-            <Input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar plantas..."
-              className="h-12 rounded-xl border-0 bg-transparent pl-11 text-base focus-visible:ring-0 focus-visible:ring-offset-0"
-            />
+            <div className="w-full md:max-w-md">
+              <div className="relative rounded-2xl border border-primary/20 bg-card shadow-sm">
+                <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-primary" />
+
+                <Input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Buscar plantas..."
+                  className="h-12 border-0 bg-transparent pl-11 pr-11 text-base focus-visible:ring-0 focus-visible:ring-offset-0"
+                />
+
+                {search && (
+                  <button
+                    onClick={() => setSearch("")}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                )}
+              </div>
+
+              <p className="mt-2 text-right text-xs text-muted-foreground">
+                {filteredPlants.length} de {plants.length} espécies
+              </p>
+            </div>
           </div>
         </div>
       </div>
 
       {filteredPlants.length === 0 ? (
         <div className="rounded-2xl border bg-card p-10 text-center">
-          <p className="text-lg font-medium">
-            Nenhuma planta encontrada
-          </p>
-
+          <p className="text-lg font-medium">Nenhuma planta encontrada</p>
           <p className="mt-2 text-muted-foreground">
             Tente pesquisar por outro nome.
           </p>

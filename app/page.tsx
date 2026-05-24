@@ -1,5 +1,4 @@
 import { Leaf, Sparkles, BookOpen } from "lucide-react"
-
 import { supabase } from "@/lib/supabase"
 import { PlantsGrid } from "@/components/plants-grid"
 
@@ -43,21 +42,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="container mx-auto px-4 py-12">
-        <div className="mb-8 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
-          <div>
-            <h2 className="text-3xl font-bold">Catálogo de plantas</h2>
-
-            <p className="text-muted-foreground">
-              Selecione uma espécie para visualizar detalhes completos.
-            </p>
-          </div>
-
-          <p className="text-sm text-muted-foreground">
-            {plants?.length || 0} espécies cadastradas
-          </p>
-        </div>
-
+      <section className="container mx-auto px-4 pb-12">
         <PlantsGrid plants={plants || []} />
       </section>
     </div>
