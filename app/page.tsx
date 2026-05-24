@@ -14,86 +14,59 @@ export default async function HomePage() {
     .select("id, name, scientific_name, image_url")
     .order("name", { ascending: true })
 
-  if (error) {
-    console.error(error)
-  }
+  if (error) console.error(error)
 
   return (
     <div className="relative overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(34,197,94,0.12),transparent_40%)] pointer-events-none" />
+      <section className="relative border-b border-border/60">
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,rgba(92,170,103,0.18),transparent_38%)]" />
 
-      <section className="relative">
-        <div className="container mx-auto px-4 pt-10 pb-6">
-          <div className="mx-auto max-w-5xl">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-10">
-              <div>
-                <h2 className="text-4xl md:text-5xl font-black tracking-tight text-foreground leading-tight">
-                  Catálogo de plantas
-                </h2>
-
-                <p className="mt-3 text-lg text-muted-foreground max-w-2xl">
-                  Explore espécies medicinais cultivadas no Horto da Unifametro
-                  com informações botânicas, usos tradicionais e aplicações
-                  terapêuticas.
-                </p>
-              </div>
-
-              <div className="text-sm text-muted-foreground bg-card border rounded-2xl px-5 py-4 shadow-sm">
-                <span className="block text-2xl font-bold text-primary">
-                  {plants?.length || 0}
-                </span>
-                espécies cadastradas
-              </div>
+        <div className="container mx-auto px-4 py-10 md:py-14">
+          <div className="mx-auto max-w-3xl text-center">
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
+              <Leaf className="h-4 w-4" />
+              Herbário Digital da Unifametro
             </div>
 
-            <PlantsGrid plants={plants || []} />
+            <h1 className="text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
+              Conheça as plantas medicinais do nosso horto
+            </h1>
 
-            <div className="grid md:grid-cols-3 gap-4 mt-14">
-              <div className="rounded-3xl border bg-card/70 backdrop-blur p-6 shadow-sm">
-                <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
-                  <Leaf className="h-6 w-6 text-primary" />
-                </div>
+            <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
+              Explore espécies, usos tradicionais, características botânicas,
+              cuidados de cultivo e informações educativas reunidas em um só lugar.
+            </p>
 
-                <h3 className="font-bold text-lg mb-2">
-                  Espécies medicinais
-                </h3>
-
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  Informações detalhadas sobre plantas utilizadas na fitoterapia.
-                </p>
-              </div>
-
-              <div className="rounded-3xl border bg-card/70 backdrop-blur p-6 shadow-sm">
-                <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
-                  <BookOpen className="h-6 w-6 text-primary" />
-                </div>
-
-                <h3 className="font-bold text-lg mb-2">
-                  Conteúdo educativo
-                </h3>
-
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  Aprenda sobre características botânicas e aplicações das espécies.
-                </p>
-              </div>
-
-              <div className="rounded-3xl border bg-card/70 backdrop-blur p-6 shadow-sm">
-                <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
-                  <Sparkles className="h-6 w-6 text-primary" />
-                </div>
-
-                <h3 className="font-bold text-lg mb-2">
-                  Receitas e usos
-                </h3>
-
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  Conheça formas tradicionais de utilização das plantas medicinais.
-                </p>
-              </div>
+            <div className="mt-7 grid gap-3 sm:grid-cols-3">
+              <InfoCard icon={<Leaf className="h-5 w-5" />} text="Espécies medicinais" />
+              <InfoCard icon={<BookOpen className="h-5 w-5" />} text="Informações educativas" />
+              <InfoCard icon={<Sparkles className="h-5 w-5" />} text="Receitas e usos" />
             </div>
           </div>
         </div>
       </section>
+
+      <section className="container mx-auto px-4 pb-12">
+        <PlantsGrid plants={plants || []} />
+      </section>
+    </div>
+  )
+}
+
+function InfoCard({
+  icon,
+  text,
+}: {
+  icon: React.ReactNode
+  text: string
+}) {
+  return (
+    <div className="rounded-2xl border bg-card/80 p-4 text-center shadow-sm backdrop-blur">
+      <div className="mx-auto mb-2 flex justify-center text-primary">
+        {icon}
+      </div>
+
+      <p className="text-sm font-medium">{text}</p>
     </div>
   )
 }
