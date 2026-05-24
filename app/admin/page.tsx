@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase-server"
 
@@ -14,48 +15,38 @@ export default async function AdminPage() {
 
   return (
     <div className="container mx-auto px-4 py-10">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold">
-            Painel Administrativo
-          </h1>
-
-          <p className="text-muted-foreground">
-            Gerencie o herbário digital
-          </p>
-        </div>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold">Painel Administrativo</h1>
+        <p className="text-muted-foreground">Gerencie o herbário digital</p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
-        <div className="rounded-xl border bg-card p-6">
-          <h2 className="font-semibold mb-2">
-            Plantas
-          </h2>
+        <Link href="/admin/plants">
+          <div className="rounded-xl border bg-card p-6 hover:shadow-md transition cursor-pointer">
+            <h2 className="font-semibold mb-2">Plantas</h2>
+            <p className="text-sm text-muted-foreground">
+              Gerenciar espécies cadastradas
+            </p>
+          </div>
+        </Link>
 
-          <p className="text-sm text-muted-foreground">
-            Gerenciar espécies cadastradas
-          </p>
-        </div>
+        <Link href="/admin/receitas">
+          <div className="rounded-xl border bg-card p-6 hover:shadow-md transition cursor-pointer">
+            <h2 className="font-semibold mb-2">Receitas</h2>
+            <p className="text-sm text-muted-foreground">
+              Gerenciar receitas medicinais
+            </p>
+          </div>
+        </Link>
 
-        <div className="rounded-xl border bg-card p-6">
-          <h2 className="font-semibold mb-2">
-            Receitas
-          </h2>
-
-          <p className="text-sm text-muted-foreground">
-            Gerenciar receitas medicinais
-          </p>
-        </div>
-
-        <div className="rounded-xl border bg-card p-6">
-          <h2 className="font-semibold mb-2">
-            Analytics
-          </h2>
-
-          <p className="text-sm text-muted-foreground">
-            Visualizar acessos do site
-          </p>
-        </div>
+        <Link href="/admin/dashboard">
+          <div className="rounded-xl border bg-card p-6 hover:shadow-md transition cursor-pointer">
+            <h2 className="font-semibold mb-2">Analytics</h2>
+            <p className="text-sm text-muted-foreground">
+              Visualizar acessos do site
+            </p>
+          </div>
+        </Link>
       </div>
     </div>
   )

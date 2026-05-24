@@ -14,7 +14,7 @@ export function LoginForm() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
 
-  async function handleLogin(e: React.FormEvent) {
+  async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setLoading(true)
     setError("")
@@ -30,7 +30,7 @@ export function LoginForm() {
       return
     }
 
-    router.push("/admin")
+    router.replace("/admin")
     router.refresh()
   }
 
