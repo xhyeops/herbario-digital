@@ -3,17 +3,19 @@ import Image from "next/image"
 import Link from "next/link"
 import {
   ArrowLeft,
-  Droplet,
-  Sun,
-  Sprout,
   AlertTriangle,
+  BookOpen,
+  Droplet,
   Leaf,
   Pill,
-  ChefHat,
+  Sprout,
+  Sun,
+  MapPin,
+  Globe2,
+  FlaskConical,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { supabase } from "@/lib/supabase"
 
@@ -35,338 +37,280 @@ export default async function PlantDetailPage({
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <Link href="/">
-        <Button variant="ghost" className="mb-6">
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Voltar para plantas
-        </Button>
-      </Link>
+    <div className="min-h-screen">
+      <section className="border-b border-border/60 bg-gradient-to-b from-primary/5 to-transparent">
+        <div className="container mx-auto px-4 py-8">
+          <Link href="/">
+            <Button variant="ghost" className="mb-6 gap-2">
+              <ArrowLeft className="h-4 w-4" />
+              Voltar para plantas
+            </Button>
+          </Link>
 
-      <div className="grid md:grid-cols-2 gap-8 mb-8">
-        <div className="relative aspect-square rounded-lg overflow-hidden">
-          <Image
-            src={plant.image_url || "/placeholder.svg"}
-            alt={plant.name}
-            fill
-            className="object-cover"
-            priority
-          />
-        </div>
-
-        <div>
-          <h1 className="text-4xl font-bold mb-2">
-            {plant.name}
-          </h1>
-
-          <p className="text-xl text-muted-foreground italic mb-4">
-            {plant.scientific_name}
-          </p>
-
-          <Badge variant="secondary" className="mb-6">
-            Família: {plant.family}
-          </Badge>
-
-          <div className="space-y-4">
-            <div>
-              <h2 className="text-lg font-semibold mb-2">
-                Descrição
-              </h2>
-
-              <p className="text-muted-foreground leading-relaxed">
-                {plant.description}
-              </p>
+          <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border bg-muted shadow-lg">
+              <Image
+                src={plant.image_url || "/placeholder.svg"}
+                alt={plant.name}
+                fill
+                className="object-cover"
+                priority
+              />
             </div>
 
-            {plant.origin && (
-              <div>
-                <h2 className="text-lg font-semibold mb-2">
-                  Origem
-                </h2>
+            <div className="space-y-5">
+              <Badge className="rounded-full px-3 py-1">
+                Família: {plant.family}
+              </Badge>
 
-                <p className="text-muted-foreground leading-relaxed">
-                  {plant.origin}
+              <div>
+                <h1 className="text-4xl font-bold tracking-tight md:text-5xl">
+                  {plant.name}
+                </h1>
+
+                <p className="mt-2 text-xl italic text-muted-foreground">
+                  {plant.scientific_name}
                 </p>
               </div>
-            )}
 
-            <div>
-              <h2 className="text-lg font-semibold mb-2">
-                Habitat
-              </h2>
-
-              <p className="text-muted-foreground leading-relaxed">
-                {plant.habitat}
+              <p className="max-w-2xl text-lg leading-relaxed text-muted-foreground">
+                {plant.description}
               </p>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                {plant.origin && (
+                  <InfoMini icon={<Globe2 />} title="Origem" text={plant.origin} />
+                )}
+
+                {plant.habitat && (
+                  <InfoMini icon={<MapPin />} title="Habitat" text={plant.habitat} />
+                )}
+              </div>
             </div>
           </div>
         </div>
+      </section>
+
+      <main className="container mx-auto px-4 py-10">
+        <div className="grid gap-6">
+          {plant.cultivation && (
+            <InfoCard
+              icon={<Sprout />}
+              title="Necessidades de Cultivo"
+              text={plant.cultivation}
+            />
+          )}
+
+          {plant.characteristics && plant.characteristics.length > 0 && (
+            <ListCard
+              icon={<Leaf />}
+              title="Características"
+              items={plant.characteristics}
+            />
+          )}
+
+          {plant.medicinal_use && (
+            <InfoCard
+              icon={<Pill />}
+              title="Uso Medicinal"
+              text={plant.medicinal_use}
+            />
+          )}
+
+          {plant.used_parts && (
+            <InfoCard
+              icon={<FlaskConical />}
+              title="Partes Utilizadas"
+              text={plant.used_parts}
+            />
+          )}
+
+          {plant.how_to_use && (
+            <InfoCard
+              icon={<BookOpen />}
+              title="Modo de Usar"
+              text={plant.how_to_use}
+            />
+          )}
+
+          {plant.uses && plant.uses.length > 0 && (
+            <ListCard
+              icon={<Leaf />}
+              title="Usos e Aplicações"
+              items={plant.uses}
+            />
+          )}
+
+          {plant.toxicity && (
+            <WarningCard
+              title="Possíveis Efeitos Tóxicos"
+              text={plant.toxicity}
+              color="orange"
+            />
+          )}
+
+          {plant.contraindications && (
+            <WarningCard
+              title="Contraindicações e Precauções"
+              text={plant.contraindications}
+              color="red"
+            />
+          )}
+
+          {plant.care && (
+            <section className="rounded-3xl border bg-card p-6 shadow-sm">
+              <h2 className="mb-6 text-xl font-bold">Guia de Cuidados</h2>
+
+              <div className="grid gap-5 md:grid-cols-3">
+                <CareItem icon={<Sun />} title="Luz" text={plant.care.light} />
+                <CareItem icon={<Droplet />} title="Água" text={plant.care.water} />
+                <CareItem icon={<Sprout />} title="Solo" text={plant.care.soil} />
+              </div>
+            </section>
+          )}
+
+          {plant.plant_references && plant.plant_references.length > 0 && (
+            <section className="rounded-3xl border bg-muted/40 p-6 shadow-sm">
+              <h2 className="mb-5 text-xl font-bold">
+                Referências Bibliográficas
+              </h2>
+
+              <ol className="space-y-3 text-sm leading-relaxed text-muted-foreground">
+                {plant.plant_references.map((reference: string, index: number) => (
+                  <li key={index}>
+                    {index + 1}. {reference}
+                  </li>
+                ))}
+              </ol>
+            </section>
+          )}
+        </div>
+      </main>
+    </div>
+  )
+}
+
+function InfoMini({
+  icon,
+  title,
+  text,
+}: {
+  icon: React.ReactNode
+  title: string
+  text: string
+}) {
+  return (
+    <div className="rounded-2xl border bg-card p-4 shadow-sm">
+      <div className="mb-2 flex items-center gap-2 font-semibold">
+        <span className="text-primary [&_svg]:h-4 [&_svg]:w-4">{icon}</span>
+        {title}
       </div>
 
-      {plant.cultivation && (
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Sprout className="h-5 w-5 text-accent" />
-              Necessidades de Cultivo
-            </CardTitle>
-          </CardHeader>
+      <p className="text-sm text-muted-foreground">{text}</p>
+    </div>
+  )
+}
 
-          <CardContent>
-            <p className="text-muted-foreground leading-relaxed">
-              {plant.cultivation}
-            </p>
-          </CardContent>
-        </Card>
-      )}
+function InfoCard({
+  icon,
+  title,
+  text,
+}: {
+  icon: React.ReactNode
+  title: string
+  text: string
+}) {
+  return (
+    <section className="rounded-3xl border bg-card p-6 shadow-sm transition hover:shadow-md">
+      <div className="mb-4 flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary [&_svg]:h-5 [&_svg]:w-5">
+          {icon}
+        </div>
 
-      {plant.characteristics && (
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Leaf className="h-5 w-5 text-accent" />
-              Características
-            </CardTitle>
-          </CardHeader>
+        <h2 className="text-xl font-bold">{title}</h2>
+      </div>
 
-          <CardContent>
-            <ul className="grid sm:grid-cols-2 gap-3">
-              {plant.characteristics.map(
-                (char: string, index: number) => (
-                  <li
-                    key={index}
-                    className="flex items-start gap-2"
-                  >
-                    <span className="text-accent mt-1">
-                      •
-                    </span>
+      <p className="leading-relaxed text-muted-foreground whitespace-pre-line">
+        {text}
+      </p>
+    </section>
+  )
+}
 
-                    <span className="text-muted-foreground">
-                      {char}
-                    </span>
-                  </li>
-                )
-              )}
-            </ul>
-          </CardContent>
-        </Card>
-      )}
+function ListCard({
+  icon,
+  title,
+  items,
+}: {
+  icon: React.ReactNode
+  title: string
+  items: string[]
+}) {
+  return (
+    <section className="rounded-3xl border bg-card p-6 shadow-sm transition hover:shadow-md">
+      <div className="mb-5 flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary [&_svg]:h-5 [&_svg]:w-5">
+          {icon}
+        </div>
 
-      {plant.medicinal_use && (
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Pill className="h-5 w-5 text-accent" />
-              Uso Medicinal
-            </CardTitle>
-          </CardHeader>
+        <h2 className="text-xl font-bold">{title}</h2>
+      </div>
 
-          <CardContent>
-            <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
-              {plant.medicinal_use}
-            </p>
-          </CardContent>
-        </Card>
-      )}
+      <ul className="grid gap-3 md:grid-cols-2">
+        {items.map((item, index) => (
+          <li key={index} className="flex gap-3 text-muted-foreground">
+            <span className="mt-2 h-2 w-2 rounded-full bg-primary" />
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
 
-      {plant.culinary_uses && (
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <ChefHat className="h-5 w-5 text-accent" />
-              Uso Culinário
-            </CardTitle>
-          </CardHeader>
+function WarningCard({
+  title,
+  text,
+  color,
+}: {
+  title: string
+  text: string
+  color: "red" | "orange"
+}) {
+  const styles =
+    color === "red"
+      ? "border-red-300/70 bg-red-50 text-red-900 dark:bg-red-950/30 dark:text-red-200"
+      : "border-orange-300/70 bg-orange-50 text-orange-900 dark:bg-orange-950/30 dark:text-orange-200"
 
-          <CardContent>
-            <p className="text-muted-foreground leading-relaxed">
-              {plant.culinary_uses}
-            </p>
-          </CardContent>
-        </Card>
-      )}
+  return (
+    <section className={`rounded-3xl border p-6 shadow-sm ${styles}`}>
+      <div className="mb-4 flex items-center gap-3 font-bold">
+        <AlertTriangle className="h-5 w-5" />
+        <h2 className="text-xl">{title}</h2>
+      </div>
 
-      {plant.parts_used && (
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>
-              Partes Utilizadas
-            </CardTitle>
-          </CardHeader>
+      <p className="leading-relaxed whitespace-pre-line">{text}</p>
+    </section>
+  )
+}
 
-          <CardContent>
-            <p className="text-muted-foreground leading-relaxed">
-              {plant.parts_used}
-            </p>
-          </CardContent>
-        </Card>
-      )}
+function CareItem({
+  icon,
+  title,
+  text,
+}: {
+  icon: React.ReactNode
+  title: string
+  text: string
+}) {
+  return (
+    <div className="rounded-2xl border bg-background/60 p-5 text-center">
+      <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary [&_svg]:h-6 [&_svg]:w-6">
+        {icon}
+      </div>
 
-      {plant.how_to_use && (
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>
-              Modo de Usar
-            </CardTitle>
-          </CardHeader>
-
-          <CardContent>
-            <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
-              {plant.how_to_use}
-            </p>
-          </CardContent>
-        </Card>
-      )}
-
-      {plant.uses && (
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>
-              Usos e Aplicações
-            </CardTitle>
-          </CardHeader>
-
-          <CardContent>
-            <ul className="grid sm:grid-cols-2 gap-3">
-              {plant.uses.map(
-                (use: string, index: number) => (
-                  <li
-                    key={index}
-                    className="flex items-start gap-2"
-                  >
-                    <span className="text-accent mt-1">
-                      •
-                    </span>
-
-                    <span className="text-muted-foreground">
-                      {use}
-                    </span>
-                  </li>
-                )
-              )}
-            </ul>
-          </CardContent>
-        </Card>
-      )}
-
-      {plant.toxicity && (
-        <Card className="mb-6 border-orange-200 bg-orange-50/50">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-orange-700">
-              <AlertTriangle className="h-5 w-5" />
-              Possíveis Efeitos Tóxicos
-            </CardTitle>
-          </CardHeader>
-
-          <CardContent>
-            <p className="text-orange-900/80 leading-relaxed whitespace-pre-line">
-              {plant.toxicity}
-            </p>
-          </CardContent>
-        </Card>
-      )}
-
-      {plant.contraindications && (
-        <Card className="mb-6 border-red-200 bg-red-50/50">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-red-700">
-              <AlertTriangle className="h-5 w-5" />
-              Contraindicações e Precauções
-            </CardTitle>
-          </CardHeader>
-
-          <CardContent>
-            <p className="text-red-900/80 leading-relaxed whitespace-pre-line">
-              {plant.contraindications}
-            </p>
-          </CardContent>
-        </Card>
-      )}
-
-      {plant.care && (
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>
-              Guia de Cuidados
-            </CardTitle>
-          </CardHeader>
-
-          <CardContent>
-            <div className="grid sm:grid-cols-3 gap-6">
-              <div className="flex flex-col items-center text-center">
-                <div className="h-12 w-12 rounded-full bg-accent/10 flex items-center justify-center mb-3">
-                  <Sun className="h-6 w-6 text-accent" />
-                </div>
-
-                <h3 className="font-semibold mb-1">
-                  Luz
-                </h3>
-
-                <p className="text-sm text-muted-foreground">
-                  {plant.care.light}
-                </p>
-              </div>
-
-              <div className="flex flex-col items-center text-center">
-                <div className="h-12 w-12 rounded-full bg-accent/10 flex items-center justify-center mb-3">
-                  <Droplet className="h-6 w-6 text-accent" />
-                </div>
-
-                <h3 className="font-semibold mb-1">
-                  Água
-                </h3>
-
-                <p className="text-sm text-muted-foreground">
-                  {plant.care.water}
-                </p>
-              </div>
-
-              <div className="flex flex-col items-center text-center">
-                <div className="h-12 w-12 rounded-full bg-accent/10 flex items-center justify-center mb-3">
-                  <Sprout className="h-6 w-6 text-accent" />
-                </div>
-
-                <h3 className="font-semibold mb-1">
-                  Solo
-                </h3>
-
-                <p className="text-sm text-muted-foreground">
-                  {plant.care.soil}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {plant.plant_references &&
-        plant.plant_references.length > 0 && (
-          <Card className="bg-muted/30">
-            <CardHeader>
-              <CardTitle className="text-lg">
-                Referências Bibliográficas
-              </CardTitle>
-            </CardHeader>
-
-            <CardContent>
-              <ul className="space-y-2">
-                {plant.plant_references.map(
-                  (
-                    reference: string,
-                    index: number
-                  ) => (
-                    <li
-                      key={index}
-                      className="text-sm text-muted-foreground leading-relaxed"
-                    >
-                      {index + 1}. {reference}
-                    </li>
-                  )
-                )}
-              </ul>
-            </CardContent>
-          </Card>
-        )}
+      <h3 className="font-bold">{title}</h3>
+      <p className="mt-1 text-sm text-muted-foreground">{text}</p>
     </div>
   )
 }
